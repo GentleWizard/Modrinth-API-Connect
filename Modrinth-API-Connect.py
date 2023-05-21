@@ -161,8 +161,4 @@ class ModrinthAPI():
 
     
     
-print(ModrinthAPI().search(query='free', limit=1, offset=0, data=['project_id']))
-print(ModrinthAPI().get_Project(id='XeEZ3fK2', data=['id']))
-print(ModrinthAPI().validate_Project(id='XeEZ3fK2'))
-print(ModrinthAPI().get_Project_Dependencies(id='XeEZ3fK2', data=['title']))
 print(ModrinthAPI().get_Project_Version(id='XeEZ3fK2', data=['id'], featured=False, game_versions=['1.16.5'], loaders=['fabric']))
