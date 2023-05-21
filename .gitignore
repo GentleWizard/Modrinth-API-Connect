@@ -1,0 +1,7 @@
+# Ignore Code of Conduct, Contributing, Readme, and License files
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+README.md
+LICENSE
+.env
+node_modules
