@@ -1,6 +1,6 @@
 # Github: ** https://github.com/GentleWizard/Modrinth-API-Connect **
 
-# The Modrinth-API-Connect module is a Python module that allows for searching and retrieving data from the Modrinth v2 API.
+# The ModrinthAPIConnect module is a Python module that allows for searching and retrieving data from the Modrinth v2 API.
 # The ModrinthAPI class is used to interact with the API and retrieve data from it.
 
 import requests
