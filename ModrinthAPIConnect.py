@@ -7,8 +7,8 @@ import requests
 import json
 
 
-# This is a Python class for interacting with the Modrinth API, allowing for searching with various parameters.
-class ModrinthAPI():
+# ModrinthAPI GET class...
+class GET:
     def __init__(self, query: str='', limit: int=1, offset: int=0, facets: dict = None):
         self. facets = facets
         self.query = query
@@ -251,3 +251,23 @@ class ModrinthAPI():
                 keys.extend(project[key] for key in info)
         return keys
         
+
+
+
+# TODO: implement POST, PATCH, and DELETE requests
+
+# Modrinth API DELETE class
+class DELETE:
+    def __init__(self):
+        pass
+    
+
+# Modrinth API POST class
+class POST:
+    def __init__(self):
+        pass
+    
+# Modrinth API PATCH class
+class PATCH:
+    def __init__(self):
+        pass
