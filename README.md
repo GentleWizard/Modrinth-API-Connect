@@ -1,66 +1,49 @@
-<h1 align="center">Project Name</h1>
-<p align="center">Short description of the project.</p>
+<h1 align="center">Modrinth-API-Connect</h1>
+<p align="center">The ModrinthAPIConnect module allows for interaction to and from the Modrinth v2 API.</p>
 
 <p align="center">
 <!-- <img src="https://img.shields.io/badge/<LABEL>-<MESSAGE>-<COLOR>?style=<STYLE>&logo=<LOGO>"/> -->
-<img src="https://img.shields.io/badge/html-5-red?style=flat&logo=html5"/>
-<img src="https://img.shields.io/badge/CSS-3-blue?style=flat&logo=css3"/>
-<img src="https://img.shields.io/badge/Javascript-ES6-yellow?style=Flat&logo=javascript"/>
+<img src="https://img.shields.io/badge/Python-3.11.0-blue?style=Flat&logo=python"/>
 </p>
 
 <details open>
 <summary>Table of Contents</summary>
 
-1. [About](#about)
-2. [Features](#features)
-3. [Requirements](#requirements)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Contributing](#contributing)
-7. [License](#license)
+- [About](#about)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Contributing](#contributing)
+- [License](#license)
 
 </details>
 
-## 1. About
+## About
 
-Description of the project.
-<!-- example: A web application that allows users to create and manage their own to-do lists. -->
+ModrinthAPIConnect is a Python module that provides a simple way to interact with the Modrinth v2 API. With this module, you can search for mods, retrieve information about specific mods, and download mod files directly from the API.
 
-## 2. Features
+The module is easy to use and comes with a number of helpful functions that make it easy to work with the Modrinth API.
 
-List of features of the project.
-<!-- example:
-- The ability to add tasks to a to-do list
-- The ability to delete tasks from a to-do list
-- The ability to mark tasks as complete
-- The ability to view all tasks at once -->
+## Features
 
-## 3. Requirements
+- Send GET requests
+- Send POST requests
+- Send DELETE requests
+- Send PATCH requests
 
-List of software or hardware requirements to run the project.
-<!-- example:
-- A modern web browser like Google Chrome, Mozilla Firefox, or Microsoft Edge -->
+## Requirements
 
-## 4. Installation
+- A Smile😁
 
-Instructions on how to install the project.
-<!-- example:
-To install the project:
+## Installation
 
-1. Download the source code from the repository
-2. Open the `index.html` file in your web browser -->
+- For GET requests: `from ModrinthAPIConnect import GET`
+- For POST requests: `from ModrinthAPIConnect import POST`
+- For DELETE requests: `from ModrinthAPIConnect import DELETE`
+- For PATCH requests: `from ModrinthAPIConnect import PATCH`
 
-## 5. Usage
 
-Instructions on how to use the project.
-<!-- example:
-To use the application:
-
-1. Add tasks to the to-do list using the input field and buttons
-2. Mark tasks as complete by clicking the checkbox
-3. Delete tasks by clicking the "Delete" button -->
-
-## 6. Contributing
+## Contributing
 
 Contributions are welcome and appreciated! If you'd like to contribute to this project, please follow these guidelines:
 
@@ -72,6 +55,6 @@ Please ensure your pull request adheres to the [CODE OF CONDUCT](CODE_OF_CONDUCT
 
 For more information on how to contribute to this repository, please see [CONTRIBUTING](CONTRIBUTING.md)
 
-## 7. License
+## License
 
 This project is released under a specific license. Please refer to the [LICENSE](LICENSE) file included in the project for the terms and conditions of the license.
