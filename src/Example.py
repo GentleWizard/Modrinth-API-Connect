@@ -30,7 +30,6 @@ data: is the data you want to get back, and is optional it defaults to showing a
 
 """
 search = get.search(query="free", limit=5, offset=0, data=['project_id', 'title', 'versions'], facets=[['versions:1.18.2'], ["project_type:mod"]])
-print(search)
 
 ####################################################################################################
 
