@@ -1,13 +1,18 @@
-# Github: ** https://github.com/GentleWizard/Modrinth-API-Connect **
+"""
+Author: GentleWizard
 
-# The ModrinthAPIConnect module is a Python module that allows for searching and retrieving data from the Modrinth v2 API.
-# The ModrinthAPI class is used to interact with the API and retrieve data from it.
+Github: https://github.com/GentleWizard/Modrinth-API-Connect
+
+Description: The ModrinthAPIConnect module is a Python module that allows for interaction to and from the Modrinth v2 API
+
+License: MIT
+"""
 
 import requests
 import json
 
 
-# ModrinthAPI GET class...
+# ModrinthAPI GET class
 class GET:
     def __init__(self, query: str='', limit: int=1, offset: int=0, facets: list=None):
         self.facets = facets if facets is not None else []
@@ -33,11 +38,11 @@ class GET:
             'query': self.query,
             'limit': self.limit,
             'offset': self.offset,
-            'facets': self.facets,
+            'facets': self.facets
         }
         
     # Search for projects
-    def search(self, query: str, limit: int=1, offset: int=0, data: list=None):
+    def search(self, query: str, limit: int=1, offset: int=0, data: list=None, facets: list=None):
         """
         The function takes a query, limit, offset, and data as parameters, makes a request to an API search
         endpoint, and returns specific data from the response based on the input data parameter.
@@ -68,8 +73,8 @@ class GET:
         # get search parameters
         self.search_params['query'] = query
         self.search_params['limit'] = limit
-        self.facets = []
-        self.offset = offset
+        self.search_params['offset'] = offset
+        self.search_params['facets'] = json.dumps(facets) if facets is not None else None
 
         # make request
         try:
@@ -82,17 +87,17 @@ class GET:
         if len(project_data['hits']) == 0:
             return "No results found"        
 
-        # create dictionary of dictionaries
         result = {}
         for hit in project_data['hits']:
-            # create dictionary for current hit
             data_dict = {}
+            
             if data is not None:
                 for item in data:
                     if item != 'slug':
                         key = item
                         value = hit.get(item, None)
                         data_dict[key] = value
+                        
             else:
                 for key, value in hit.items():
                     if key != 'slug':
@@ -104,7 +109,7 @@ class GET:
         return result
 
 
-    def Project(self, id: str, data: list=[]):
+    def project(self, id: str, data: list=[]):
         """
         This function retrieves project data from an API based on an ID and returns specific data if
         requested.
@@ -232,7 +237,7 @@ class GET:
             
     
 
-    def Project_Version(self, id: str, data: list = None, loaders: list = None, game_versions: list=[], featured: bool = False):
+    def list_Project_Versions(self, id: str, data: list = None, loaders: list = None, game_versions: list = None, featured: bool = False):
         """
         This is a Python function that retrieves project version information based on provided parameters
         and returns the requested data.
@@ -262,6 +267,7 @@ class GET:
         versions, depending on the input parameters.
         """
 
+
         # set API endpoint
         self.api_version_url = f'{self.base_url}{self.api_version}/project/{id}/version'      
 
@@ -281,7 +287,7 @@ class GET:
             project_data = response.json()
         except requests.exceptions.RequestException as err:
             return f"Error: {err}"
-   
+
         # return data
         result = {}
         for hit in project_data:
@@ -294,9 +300,9 @@ class GET:
             else:
                 for key , value in hit.items():
                     data_dict[key] = value
-                    
+
             result = data_dict
-            
+
         return result
         
 
