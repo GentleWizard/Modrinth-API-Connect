@@ -11,36 +11,21 @@ License: MIT
 import requests
 import json
 
-
+        
 # ModrinthAPI GET class
-class GET:
-    def __init__(self, query: str='', limit: int=1, offset: int=0, facets: list=None):
-        self.facets = facets if facets is not None else []
-        self.query = query
-        self.limit = limit
-        self.offset = offset
-        
-        
-        # validate limit and offset
-        self.limit = max(self.limit, 1)
-        self.offset = max(self.offset, 0)
-
-        # TODO: add API key
-        self.api_key = ""
-
-        # API URL and version
+class GET():
+    def __init__(self, GithubToken: str = None, GithubUsername: str = None, ProjectName: str = None, Email: str = None):
         self.base_url = 'https://api.modrinth.com/'
         self.api_version = 'v2'
+        self.search_params = {}
+        self.limit = 1
+        self.offset = 0
 
-                
-        # search parameters
-        self.search_params = {
-            'query': self.query,
-            'limit': self.limit,
-            'offset': self.offset,
-            'facets': self.facets
-        }
-        
+        self.GithubToken = GithubToken
+        self.GithubUsername = GithubUsername
+        self.ProjectName = ProjectName
+        self.Email = Email
+    
     # Search for projects
     def search(self, query: str, limit: int=1, offset: int=0, data: list=None, facets: list=None):
         """
@@ -69,12 +54,16 @@ class GET:
         
         # set API endpoint        
         self.api_search_url = f'{self.base_url}{self.api_version}/search'
+
+        self.limit = max(self.limit, 1)
+        self.offset = max(self.offset, 0)
         
-        # get search parameters
-        self.search_params['query'] = query
-        self.search_params['limit'] = limit
-        self.search_params['offset'] = offset
-        self.search_params['facets'] = json.dumps(facets) if facets is not None else None
+        self.search_params = {
+            'query': query,
+            'limit': limit,
+            'offset': offset,
+            'facets': json.dumps(facets) if facets is not None else None,
+        }
 
         # make request
         try:
@@ -90,14 +79,14 @@ class GET:
         result = {}
         for hit in project_data['hits']:
             data_dict = {}
-            
+
             if data is not None:
                 for item in data:
                     if item != 'slug':
                         key = item
                         value = hit.get(item, None)
                         data_dict[key] = value
-                        
+
             else:
                 for key, value in hit.items():
                     if key != 'slug':
@@ -235,37 +224,96 @@ class GET:
         return result
         
     
-    def multiple_Projects(self, id: str, data: list = None):
+    def multiple_Projects(self, ids: list, data: list = None):
         
         
-        self.api_project_url = f'{self.base_url}{self.api_version}/projects'
+        # set API endpoint
+        self.api_multiple_projects_url = f'{self.base_url}{self.api_version}/projects'
         
         # make request
-        if id is None:
+        if ids is None:
             return "Error: No id or slug provided"
         
+        
         try:
-            response = requests.get(self.api_project_url, timeout=10)
+            response = requests.get(self.api_multiple_projects_url, timeout=10, params={'ids': json.dumps(ids)})
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+ 
+        # return data
+        result = {}
+        for hit in project_data:
+            data_dict = {}
+            for item in data:
+                if item != 'slug':
+                    key = item
+                    value = hit.get(item, None)
+                    data_dict[key] = value
+            result[hit['slug']] = data_dict
+        return result
+    
+    
+    
+    def random_Projects(self, count: int, data: list = None):
+        
+        # set API endpoint
+        self.api_random_projects_url = f'{self.base_url}{self.api_version}/projects_random'
+        
+        if count < 1:
+            return "Error: Count must be greater than 0"
+        
+        try:
+            response = requests.get(self.api_random_projects_url, timeout=10, params={'count': count})
             response.raise_for_status()
             project_data = response.json()
         except requests.exceptions.RequestException as err:
             return f"Error: {err}"
         
         
+        # return data
+        result = {}
+        for hit in project_data:
+            data_dict = {}
+            for item in data:
+                if item != 'slug':
+                    key = item
+                    value = hit.get(item, None)
+                    data_dict[key] = value
+            result[hit['slug']] = data_dict
+        return result
+        
+    
+    def project_Version(self, id: str, data: list = None):
+        
+        # set API endpoint
+        self.api_version_url = f'{self.base_url}{self.api_version}/version/{id}'
+        
+        # make request
+        
+        if id is None:
+            return "Error: No id or slug provided"
+        
+        try:
+            response = requests.get(self.api_version_url, timeout=10)
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
         
         hit = project_data
         result = {}
         data_dict = {}
         for item in data:
-            if item != 'slug':
+            if item != 'name':
                 key = item
                 value = hit.get(item, None)
                 data_dict[key] = value
-        result[hit['slug']] = data_dict
+        result[hit['name']] = data_dict
         
         return result
-        
-    
+
 
     def list_Project_Versions(self, id: str, data: list = None, loaders: list = None, game_versions: list = None, featured: bool = False):
         """
@@ -299,7 +347,7 @@ class GET:
 
 
         # set API endpoint
-        self.api_version_url = f'{self.base_url}{self.api_version}/project/{id}/version'      
+        self.api_list_version_url = f'{self.base_url}{self.api_version}/project/{id}/version'      
 
         # set parameters
         self.version_params = {
@@ -312,7 +360,7 @@ class GET:
             return "Error: No id or slug provided"
 
         try:
-            response = requests.get(self.api_version_url, params=self.version_params, timeout=10)
+            response = requests.get(self.api_list_version_url, params=self.version_params, timeout=10)
             response.raise_for_status()
             project_data = response.json()
         except requests.exceptions.RequestException as err:
@@ -335,8 +383,173 @@ class GET:
 
         return result
         
+    def multiple_Project_Versions(self, ids: list, data: list = None):
+        
+        # set API endpoint
+        self.api_multiple_versions_url = f'{self.base_url}{self.api_version}/versions'
+        
+        # make request
+        if ids is None:
+            return "Error: No id or slug provided"
+        
+        
+        try:
+            response = requests.get(self.api_multiple_versions_url, timeout=10, params={'ids': json.dumps(ids)})
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+ 
+        # return data
+        result = {}
+        for hit in project_data:
+            data_dict = {}
+            for item in data:
+                if item != 'name':
+                    key = item
+                    value = hit.get(item, None)
+                    data_dict[key] = value
+            result[hit['name']] = data_dict
+        return result
 
 
+    def project_Versions_Hash(self, hash: str, data: list = None):
+        
+        # set API endpoint
+        self.api_project_versions_hash_url = f'{self.base_url}{self.api_version}/version_file/{hash}'
+        
+        # make request
+        if hash is None:
+            return "Error: No hash provided"
+        
+        try:
+            response = requests.get(self.api_project_versions_hash_url, timeout=10)
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+
+        # return data
+        hit = project_data
+        result = {}
+        data_dict = {}
+        for item in data:
+            if item != 'name':
+                value = hit.get(item, None)
+                data_dict[item] = value
+        result[hit['name']] = data_dict
+        return result
+
+    def user(self, id: str = None, username: str = None, data: list = None):
+            
+            # set API endpoint
+            self.api_user_url = f'{self.base_url}{self.api_version}/user/{id or username}'
+            
+            # make request
+            if id is None and username is None:
+                return "Error: No id or username provided"
+            
+            try:
+                response = requests.get(self.api_user_url, timeout=10)
+                response.raise_for_status()
+                project_data = response.json()
+            except requests.exceptions.RequestException as err:
+                return f"Error: {err}"
+
+            
+            # return data
+            hit = project_data
+            result = {}
+            data_dict = {}
+            for item in data:
+                if item != 'username':
+                    key = item
+                    value = hit.get(item, None)
+                    data_dict[key] = value
+            result[hit['username']] = data_dict
+            return result
+        
+    def your_Data(self, data: list = None): 
+            
+        # set API endpoint
+        self.api_user_from_auth_url = f'{self.base_url}{self.api_version}/user'
+            
+        # make request
+        try:
+            response = requests.get(self.api_user_from_auth_url, timeout=10, headers={'Authorization': f"{self.GithubToken}"})
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+            
+        # return data
+        hit = project_data
+        result = {}
+        data_dict = {}
+        for item in data:
+            if item != 'username':
+                key = item
+                value = hit.get(item, None)
+                data_dict[key] = value
+        result[hit['username']] = data_dict
+        return result
+    
+    def multiple_Users(self, ids: list = None, data: list = None):
+                
+            # set API endpoint
+            self.api_multiple_users_url = f'{self.base_url}{self.api_version}/users'
+                
+            # make request
+            if ids is None:
+                return "Error: No ids provided"
+                
+            try:
+                response = requests.get(self.api_multiple_users_url, timeout=10, params={'ids': json.dumps(ids)})
+                response.raise_for_status()
+                project_data = response.json()
+            except requests.exceptions.RequestException as err:
+                return f"Error: {err}"
+                
+            # return data
+            result = {}
+            for hit in project_data:
+                data_dict = {}
+                for item in data:
+                    if item != 'username':
+                        key = item
+                        value = hit.get(item, None)
+                        data_dict[key] = value
+                result[hit['username']] = data_dict
+            return result
+        
+    def user_Projects(self, id: str = None, username: str = None, data: list = None):
+                    
+            # set API endpoint
+            self.api_user_projects_url = f'{self.base_url}{self.api_version}/user/{id or username}/projects'
+                    
+            # make request
+            if id is None and username is None:
+                return "Error: No id or username provided"
+                    
+            try:
+                response = requests.get(self.api_user_projects_url, timeout=10)
+                response.raise_for_status()
+                project_data = response.json()
+            except requests.exceptions.RequestException as err:
+                return f"Error: {err}"
+                    
+            # return data
+            result = {}
+            for hit in project_data:
+                data_dict = {}
+                for item in data:
+                    if item != 'slug': 
+                        key = item
+                        value = hit.get(item, None)
+                        data_dict[key] = value
+                result[hit['slug']] = data_dict
+            return result
+        
 
 # TODO: implement POST, PATCH, and DELETE requests
 
