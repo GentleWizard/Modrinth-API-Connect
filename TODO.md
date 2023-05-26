@@ -4,8 +4,8 @@
 
 - [x] Search projects
 - [x] Search projects
-- [ ] Get multiple projects
-- [ ] Get a list of random projects
+- [x] Get multiple projects
+- [x] Get a list of random projects
 - [x] Check project slug/ID validity
 - [x] Get all of a project's dependencies
 
@@ -14,18 +14,18 @@
 ## Versions
 
 - [x] List project's versions
-- [ ] Get a version
-- [ ] Get multiple versions
-- [ ] Get version from hash
+- [x] Get a version
+- [x] Get multiple versions
+- [x] Get version from hash
 
 ---
 
 ## Users
 
-- [ ] Get a user
-- [ ] Get user from authorization header
-- [ ] Get multiple users
-- [ ] Get user's projects
+- [x] Get a user
+- [x] Get user from authorization header
+- [x] Get multiple users
+- [x] Get user's projects
 - [ ] Get user's notifications
 - [ ] Get user's followed projects
 - [ ] Get user's payout history
