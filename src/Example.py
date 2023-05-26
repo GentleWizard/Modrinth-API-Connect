@@ -84,3 +84,4 @@ Project_Version = get.Project_Version(id='XeEZ3fK2', game_versions=['1.16.5'], l
 
 ####################################################################################################
 
+multiple_projects = get.multiple_projects(ids=['XeEZ3fK2', 'XeEZ3fK2'], data=['title', 'id'])

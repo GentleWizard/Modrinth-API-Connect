@@ -109,7 +109,7 @@ class GET:
         return result
 
 
-    def project(self, id: str, data: list=[]):
+    def project(self, id: str, data: list = None):
         """
         This function retrieves project data from an API based on an ID and returns specific data if
         requested.
@@ -182,7 +182,7 @@ class GET:
             
 
 
-    def Project_Dependencies(self, id: str, data: list=[]):
+    def Project_Dependencies(self, id: str, data: list = None):
         """
         This is a Python function that retrieves project dependencies based on an ID and returns either the
         full dictionary or a list of specified data.
@@ -234,7 +234,37 @@ class GET:
         
         return result
         
-            
+    
+    def multiple_Projects(self, id: str, data: list = None):
+        
+        
+        self.api_project_url = f'{self.base_url}{self.api_version}/projects'
+        
+        # make request
+        if id is None:
+            return "Error: No id or slug provided"
+        
+        try:
+            response = requests.get(self.api_project_url, timeout=10)
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+        
+        
+        
+        hit = project_data
+        result = {}
+        data_dict = {}
+        for item in data:
+            if item != 'slug':
+                key = item
+                value = hit.get(item, None)
+                data_dict[key] = value
+        result[hit['slug']] = data_dict
+        
+        return result
+        
     
 
     def list_Project_Versions(self, id: str, data: list = None, loaders: list = None, game_versions: list = None, featured: bool = False):
