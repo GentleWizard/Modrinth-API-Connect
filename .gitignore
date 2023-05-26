@@ -5,3 +5,4 @@ README.md
 LICENSE
 .env
 node_modules
+src/test.py

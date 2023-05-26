@@ -9,26 +9,25 @@ import json
 
 # ModrinthAPI GET class...
 class GET:
-    def __init__(self, query: str='', limit: int=1, offset: int=0, facets: dict = None):
-        self. facets = facets
+    def __init__(self, query: str='', limit: int=1, offset: int=0, facets: list=None):
+        self.facets = facets if facets is not None else []
         self.query = query
         self.limit = limit
         self.offset = offset
         
-        if facets is None:
-            facets = {"versions": [], "categories": [], "project_type": []}
-        if self.limit < 1:
-            self.limit = 1
-        if self.offset < 0:
-            self.offset = 0
+        
+        # validate limit and offset
+        self.limit = max(self.limit, 1)
+        self.offset = max(self.offset, 0)
 
         # TODO: add API key
         self.api_key = ""
 
-        # API search URL
+        # API URL and version
         self.base_url = 'https://api.modrinth.com/'
-        self.API_version = 'v2'
+        self.api_version = 'v2'
 
+                
         # search parameters
         self.search_params = {
             'query': self.query,
@@ -38,7 +37,7 @@ class GET:
         }
         
     # Search for projects
-    def search(self, query: str, limit: int=1, offset: int=0, data: list = None):
+    def search(self, query: str, limit: int=1, offset: int=0, data: list=None):
         """
         The function takes a query, limit, offset, and data as parameters, makes a request to an API search
         endpoint, and returns specific data from the response based on the input data parameter.
@@ -61,9 +60,10 @@ class GET:
         
         :return: either the entire JSON response from the search API or a list of values corresponding to
         the specified keys in the 'data' parameter.
-        """
-        # url
-        self.api_search_url = f'{self.base_url}{self.API_version}/search'
+        """        
+        
+        # set API endpoint        
+        self.api_search_url = f'{self.base_url}{self.api_version}/search'
         
         # get search parameters
         self.search_params['query'] = query
@@ -72,22 +72,39 @@ class GET:
         self.offset = offset
 
         # make request
-        response = requests.get(self.api_search_url, params=self.search_params)
-        project_data = response.json()
+        try:
+            response = requests.get(self.api_search_url, params=self.search_params, timeout=10)
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
 
-            
-        # return data    
-        keys = []
-        if data is None:
-            return project_data
+        if len(project_data['hits']) == 0:
+            return "No results found"        
 
-        for datum in data:
-            info = datum.split()
-            keys.extend(project_data['hits'][0][key] for key in info)
-        return keys
-        
+        # create dictionary of dictionaries
+        result = {}
+        for hit in project_data['hits']:
+            # create dictionary for current hit
+            data_dict = {}
+            if data is not None:
+                for item in data:
+                    if item != 'slug':
+                        key = item
+                        value = hit.get(item, None)
+                        data_dict[key] = value
+            else:
+                for key, value in hit.items():
+                    if key != 'slug':
+                        data_dict[key] = value
 
-    def get_Project(self, id: str, data: list = None):
+            # add data_dict to result dictionary
+            result[hit['slug']] = data_dict
+
+        return result
+
+
+    def Project(self, id: str, data: list=[]):
         """
         This function retrieves project data from an API based on an ID and returns specific data if
         requested.
@@ -105,26 +122,34 @@ class GET:
         no specific data is requested, or a list of specific data requested by the `data` parameter. If
         there is an error and no `id` or `slug` is provided, an error message is returned.
         """
-        # url
-        self.api_project_url = f'{self.base_url}{self.API_version}/project/{id}'
+
+        # set API endpoint
+        self.api_project_url = f'{self.base_url}{self.api_version}/project/{id}'
         
         # make request
         if id is None:
             return "Error: No id or slug provided"
         
-        response = requests.get(self.api_project_url)
-        project_data = response.json()
-
-            
-        # return data    
-        keys = []   
-        if data is None:
-            return project_data
-
-        for datum in data:
-            info = datum.split()
-            keys.extend(project_data[key] for key in info)
-        return keys 
+        try:
+            response = requests.get(self.api_project_url, timeout=10)
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+        
+        
+        
+        hit = project_data
+        result = {}
+        data_dict = {}
+        for item in data:
+            if item != 'slug':
+                key = item
+                value = hit.get(item, None)
+                data_dict[key] = value
+        result[hit['slug']] = data_dict
+        
+        return result
             
             
 
@@ -139,21 +164,20 @@ class GET:
         
         :return: a boolean value indicating whether the response status code is equal to 200 or not.
         """
-        # url
-        self.api_validity_url = f'{self.base_url}{self.API_version}/project/{id}/check'
+        
+        self.api_validity_url = f'{self.base_url}{self.api_version}/project/{id}/check'
         
         # make request
         if id is None:
             return "Error: No id or slug provided"
-        
-        # return data
-        response = requests.get(self.api_validity_url)
-        return response.status_code == 200
 
+        # return data
+        response = requests.get(self.api_validity_url, timeout=10)
+        return response.status_code == 200
             
 
 
-    def get_Project_Dependencies(self, id: str, data: list = None):
+    def Project_Dependencies(self, id: str, data: list=[]):
         """
         This is a Python function that retrieves project dependencies based on an ID and returns either the
         full dictionary or a list of specified data.
@@ -170,31 +194,45 @@ class GET:
         :return: either the dictionary of project dependencies if no data is provided, or a list of project
         dependencies keys based on the provided data.
         """
-        # url
-        self.api_dependencies_url = f'{self.base_url}{self.API_version}/project/{id}/dependencies'
+        
+        # set API endpoint
+        self.api_dependencies_url = f'{self.base_url}{self.api_version}/project/{id}/dependencies'
         
         # make request
         if id is None:
             return "Error: No id or slug provided"
 
-        response = requests.get(self.api_dependencies_url)
-        project_data = response.json()
+        try:
+            response = requests.get(self.api_dependencies_url, timeout=10)
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+        
 
-        # return data
-        keys = []
-        if data is None:
-            return project_data
-        for datum in data:
-            info = datum.split()
-            for project in project_data['projects']:
-                keys.extend(project[key] for key in info)
-        return keys
-            
+
+        result = {}
+        for hit in project_data['projects']:
+            data_dict = {}
+            if data is not None:
+                for item in data:
+                    if item != 'slug':
+                        key = item
+                        value = hit.get(item, None)
+                        data_dict[key] = value
+            else:
+                for key, value in hit.items():
+                    if key != 'slug':
+                        data_dict[key] = value
+                        
+            result[hit['slug']] = data_dict
+        
+        return result
         
             
     
 
-    def get_Project_Version(self, id: str, data: list = None, loaders: list = None, game_versions: list = None, featured: bool = False):
+    def Project_Version(self, id: str, data: list = None, loaders: list = None, game_versions: list=[], featured: bool = False):
         """
         This is a Python function that retrieves project version information based on provided parameters
         and returns the requested data.
@@ -223,10 +261,11 @@ class GET:
         :return: either the dictionary of project versions or a list of specific data keys from the project
         versions, depending on the input parameters.
         """
-        # url
-        self.api_version_url = f'{self.base_url}{self.API_version}/project/{id}/version'
-        
 
+        # set API endpoint
+        self.api_version_url = f'{self.base_url}{self.api_version}/project/{id}/version'      
+
+        # set parameters
         self.version_params = {
             'loaders': json.dumps(loaders),
             'game_versions': json.dumps(game_versions),
@@ -236,20 +275,29 @@ class GET:
         if id is None:
             return "Error: No id or slug provided"
 
-        response = requests.get(self.api_version_url, params=self.version_params)
-        project_data = response.json()
-        
-       
+        try:
+            response = requests.get(self.api_version_url, params=self.version_params, timeout=10)
+            response.raise_for_status()
+            project_data = response.json()
+        except requests.exceptions.RequestException as err:
+            return f"Error: {err}"
+   
         # return data
-        keys = []                
-        if data is None:
-            return project_data
-
-        for datum in data:
-            info = datum.split()
-            for project in project_data:
-                keys.extend(project[key] for key in info)
-        return keys
+        result = {}
+        for hit in project_data:
+            data_dict = {}
+            if data is not None:
+                for item in data: 
+                    key = item
+                    value = hit.get(item, None)
+                    data_dict[key] = value
+            else:
+                for key , value in hit.items():
+                    data_dict[key] = value
+                    
+            result = data_dict
+            
+        return result
         
 
 
