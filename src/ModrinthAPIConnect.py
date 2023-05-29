@@ -46,43 +46,10 @@ class GET():
                 if key != omit:
                     data_dict[key] = value        
         return {hit[omit]: data_dict}
-
-    async def __dict_result_async(self, omit, data, project_data):
-        hit = project_data
-        data_dict = {}
-        if data is not None:
-            for item in data:
-                if item != omit:
-                    key = item
-                    value = hit.get(item, None)
-                    data_dict[key] = value
-        else:
-            for key, value in hit.items():
-                if key != omit:
-                    data_dict[key] = value        
-        return {hit[omit]: data_dict}        
         
     def __list_result(self, omit, data, project_data):
         result = {}
         for hit in project_data:
-            data_dict = {}
-            if data is not None:
-                for item in data:
-                    if item != omit:
-                        key = item
-                        value = hit.get(item, None)
-                        data_dict[key] = value
-            else:
-                for key, value in hit.items():
-                    if key != omit:
-                        data_dict[key] = value
-            
-            result[hit[omit]] = data_dict
-        return result
-
-    async def __list_result_async(self, omit, data, project_data):
-        result = {}
-        async for hit in project_data:
             data_dict = {}
             if data is not None:
                 for item in data:
@@ -104,16 +71,6 @@ class GET():
             response.raise_for_status()
             project_data = response.json()
         except requests.exceptions.RequestException as err:
-            return f"Error: {err}"
-        return project_data
-    
-    async def __api_request_async(self, url: str, params: dict = None):
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=params, headers=self.All_Auth, timeout=10) as response:
-                    response.raise_for_status()
-                    project_data = await response.json()
-        except aiohttp.ClientError as err:
             return f"Error: {err}"
         return project_data
             
