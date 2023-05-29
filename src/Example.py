@@ -4,7 +4,7 @@ from ModrinthAPIConnect import GET
 # from ModrinthAPIConnect import PATCH
 
 
-get = GET(Token='Your Token', GithubUsername='GentleWizard', Email='github@gentlewizard.ca')
+get = GET(Token='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', GithubUsername='GentleWizard', Email='github@gentlewizard.ca')
 # post = POST() # Not yet implemented
 # delete = DELETE() # Not yet implemented
 # patch = PATCH() # Not yet implemented
@@ -130,8 +130,8 @@ User = get.user(id='7wY1ZtMM', data=['avatar_url', 'role', 'created'])
 
 ####################################################################################################
 
-Your_Data = get.authenticated_User(data=['id'])
-# print(Your_Data)
+Your_Data = get.authenticated_User(data=['id', 'github_id'])
+print(Your_Data)
 
 ####################################################################################################
 
