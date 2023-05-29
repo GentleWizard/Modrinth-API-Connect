@@ -4,7 +4,7 @@ from ModrinthAPIConnect import GET
 # from ModrinthAPIConnect import PATCH
 
 
-get = GET(GithubToken='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')
+get = GET(Token='Your Token', GithubUsername='GentleWizard', Email='github@gentlewizard.ca')
 # post = POST() # Not yet implemented
 # delete = DELETE() # Not yet implemented
 # patch = PATCH() # Not yet implemented
@@ -30,7 +30,10 @@ each facet is a piece of data you can receive from the api, and the value is the
 data: is the data you want to get back, and is optional it defaults to showing all data
 
 """
-search = get.search(query="free", limit=5, offset=0, data=['project_id', 'title', 'versions'], facets=[['versions:1.18.2'], ["project_type:mod"]])
+
+search = get.search(query="free", limit=1, offset=0, data=['project_id', 'title'], facets=[['versions:1.18.2'], ["project_type:mod"]])
+# print(search)
+
 
 ####################################################################################################
 
@@ -42,6 +45,7 @@ id: is a string of the project you want to get data from
 data: is the data you want to get back, and is optional it defaults to showing all data
 """
 project = get.project(id='XeEZ3fK2', data=['title', 'id'])
+# print(project)
 
 ####################################################################################################
 
@@ -52,6 +56,7 @@ The validate_Project function checks if a project id is valid.
 id: is a string of the project you want to check
 """
 validate_Project = get.validate_Project(id='XeEZ3fK2')
+# print(validate_Project)
 
 ####################################################################################################
 
@@ -64,6 +69,7 @@ id: is a string of the project you want to get data from
 data: is the data you want to get back, and is optional it defaults to showing all data
 """
 Project_Dependencies = get.Project_Dependencies(id='XeEZ3fK2', data=['title', 'id'])
+# print(Project_Dependencies)
 
 ####################################################################################################
 
@@ -81,8 +87,9 @@ featured: is if you want to get only featured versions or not
 
 data: is the data you want to get back, and is optional it defaults to showing all data
 """
-List_Project_Version = get.list_Project_Versions(id='XeEZ3fK2', game_versions=['1.17.1'], loaders=['fabric', 'forge', 'quilt'], data=['id', 'version_number', 'files'], featured=False)
+List_Project_Version = get.list_Project_Versions(id='XeEZ3fK2', game_versions=['1.19.2'], loaders=['fabric'], data=['version_number'], featured=False)
 # print(List_Project_Version)
+
 ####################################################################################################
 
 """
@@ -94,14 +101,17 @@ data: is the data you want to get back, and is optional it defaults to showing a
 """
 
 multiple_projects = get.multiple_Projects(ids=['ttfYkIsI', 'XeEZ3fK2'], data=['title', 'id'])
+# print(multiple_projects)
 
 ####################################################################################################
 
 random_Project = get.random_Projects(count=2, data=['title', 'id'])
+# print(random_Project)
 
 ####################################################################################################
 
 Project_Version = get.project_Version(id='brPpY4rT', data=['id', 'version_number'])
+# print(Project_Version)
 
 ####################################################################################################
 
@@ -110,21 +120,30 @@ Multiple_Project_versions = get.multiple_Project_Versions(ids=['brPpY4rT', '5MFT
 
 ####################################################################################################
 
-Project_Versions_Hash = get.project_Versions_Hash(hash='f1197c53e0743dc9af60f06b358dfed1f588b175', data=['id', 'version_number', 'game_versions'])
+Project_Versions_Hash = get.project_Versions_Hash(hash='f1197c53e0743dc9af60f06b358dfed1f588b175', data=['id', 'game_versions'])
+# print(Project_Versions_Hash)
 
 ####################################################################################################
 
 User = get.user(id='7wY1ZtMM', data=['avatar_url', 'role', 'created'])
+# print(User)
 
 ####################################################################################################
 
-Your_Data = get.your_Data(data=['avatar_url', 'role', 'created'])
+Your_Data = get.authenticated_User(data=['id'])
+# print(Your_Data)
 
 ####################################################################################################
 
 Multiple_Users = get.multiple_Users(ids=['7wY1ZtMM', 'iFMgB5Ib'], data=['avatar_url', 'role', 'created'])
+# print(Multiple_Users)
 
 ####################################################################################################
 
 User_Projects = get.user_Projects(id='iFMgB5Ib', data=['title', 'id'])
-print(User_Projects)
+# print(User_Projects)
+
+####################################################################################################
+
+User_notifcations = get.user_Notifications(id='7wY1ZtMM',data=['id', 'title', 'created'])
+# print(User_notifcations)
