@@ -10,7 +10,6 @@ License: MIT
 
 import requests
 import json
-import aiohttp
 
 
         
