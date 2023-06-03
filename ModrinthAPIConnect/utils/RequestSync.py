@@ -1,5 +1,5 @@
 import requests
-from ModrinthAPIConnect.Validate import return_Auth
+from ModrinthAPIConnect.Config import return_Auth
 
 Auth = return_Auth()
 

@@ -6,8 +6,10 @@ Description: Gets data from the Modrinth API and puts it into a dictionary to be
 
 import json
 import requests
+import concurrent.futures
 
-from ModrinthAPIConnect.utils.Request import Request
+from ModrinthAPIConnect.utils.RequestAsync import Request
+from ModrinthAPIConnect.utils.RequestSync import Request
 from ModrinthAPIConnect.utils.SortData import dict_result, list_result
 
 
@@ -22,7 +24,7 @@ class Project:
         self.limit = 1
         self.offset = 0
 
-    def search(self, query: str, limit: int = 1, offset: int = 0, data: list = None, facets: list = None):
+    def search(self, query: str, limit: int = 1, offset: int = 0, data: list = None, facets: list = None, async_: bool = False):
         """
         This function searches for data based on a query, limit, offset, and facets, and returns a list of
         results.
@@ -71,16 +73,21 @@ class Project:
         }
 
         # make request
-        response, status_code = Request(url=self.api_search_url, params=params)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_search_url, params)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_search_url, params=params)
 
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif len(response['hits']) > 0 and status_code == 200:
+        elif len(response['hits']) > 0:
             # return data
             return list_result('slug', data, response['hits'])
 
-    def get(self, id: str = None, slug: str = None, data: list = None):
+    def get(self, id: str = None, slug: str = None, data: list = None, async_: bool = False):
         """
         This function takes an ID and optional data list, makes an API request to retrieve project data, and
         returns the project data with the specified slug.
@@ -107,7 +114,12 @@ class Project:
             return "Error: No id or slug provided"
 
         # make request
-        response, status_code = Request(url=self.api_project_url)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_project_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_project_url)
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -138,7 +150,7 @@ class Project:
         response = requests.get(self.api_validity_url, timeout=10)
         return response.status_code == 200
 
-    def dependencies(self, id: str, data: list = None):
+    def dependencies(self, id: str, data: list = None, async_: bool = False):
         """
         This function retrieves project dependencies data from an API endpoint and returns a list of results
         based on a provided data parameter.
@@ -167,7 +179,12 @@ class Project:
             return "Error: No id or slug provided"
 
         # make request
-        response, status_code = Request(url=self.api_dependencies_url)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_dependencies_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_dependencies_url)            
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -176,7 +193,7 @@ class Project:
             # return data
             return list_result('slug', data, response['projects'])
 
-    def get_Multiple(self, ids: list, data: list = None):
+    def get_Multiple(self, ids: list, data: list = None, async_: bool = False):
         """
         This function takes a list of project IDs and returns project data for those IDs.
 
@@ -205,8 +222,12 @@ class Project:
         }
 
         # make request
-        response, status_code = Request(
-            url=self.api_multiple_projects_url, params=params)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_multiple_projects_url, params=params)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_multiple_projects_url, params=params)          
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -215,7 +236,7 @@ class Project:
             # return data
             return list_result('slug', data, response)
 
-    def get_Random(self, count: int, data: list = None):
+    def get_Random(self, count: int, data: list = None, async_: bool = False):
         """
         This function retrieves a specified number of random projects from an API endpoint and returns their
         slugs.
@@ -247,8 +268,13 @@ class Project:
         }
 
         # make request
-        response, status_code = Request(
-            url=self.api_random_projects_url, params=params)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_random_projects_url, params=params)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_random_projects_url, params=params)          
+        
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -264,7 +290,7 @@ class Version:
         self.api_version = 'v2'
         self.base_url = f'https://api.modrinth.com/{self.api_version}'
 
-    def get(self, id: str, data: list = None):
+    def get(self, id: str, data: list = None, async_: bool = False):
         """
         This function retrieves project data based on the provided ID and returns the project name.
 
@@ -291,6 +317,13 @@ class Version:
 
         # make request
         response, status_code = Request(url=self.api_version_url)
+        
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_version_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_version_url)     
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -299,7 +332,7 @@ class Version:
             # return data
             return dict_result('name', data, response)
 
-    def get_List(self, id: str, data: list = None, loaders: list = None, game_versions: list = None, featured: bool = False, ):
+    def get_List(self, id: str, data: list = None, loaders: list = None, game_versions: list = None, featured: bool = False, async_: bool = False):
         """
         This function lists the versions of a project based on the provided parameters.
 
@@ -342,9 +375,13 @@ class Version:
         if id is None:
             return "Error: No id or slug provided"
 
-        # make request
-        response, status_code = Request(
-            url=self.api_list_version_url, params=params)
+        # make request        
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_list_version_url, params=params)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_list_version_url, params=params)     
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -353,7 +390,7 @@ class Version:
             # return data
             return list_result('id', data, response)
 
-    def get_Multiple(self, ids: list, data: list = None):
+    def get_Multiple(self, ids: list, data: list = None, async_: bool = False):
         """
         This function retrieves data for multiple project versions based on their IDs.
 
@@ -382,8 +419,12 @@ class Version:
         }
 
         # make request
-        response, status_code = Request(
-            url=self.api_multiple_versions_url, params=params)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_multiple_versions_url, params=params)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_multiple_versions_url, params=params)    
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -392,7 +433,7 @@ class Version:
             # return data
             return list_result('name', data, response)
 
-    def get_From_Hash(self, hash: str, data: list = None):
+    def get_From_Hash(self, hash: str, data: list = None, async_: bool = False):
         """
         This function takes a hash and an optional list of data, sets an API endpoint, makes a request, and
         returns a dictionary result based on the name key.
@@ -419,7 +460,12 @@ class Version:
             return "Error: No hash provided"
 
         # make request
-        response, status_code = Request(url=self.api_project_versions_hash_url)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_project_versions_hash_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_project_versions_hash_url)     
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -435,7 +481,7 @@ class User:
         self.api_version = 'v2'
         self.base_url = f'https://api.modrinth.com/{self.api_version}'
 
-    def get(self, id: str = None, username: str = None, data: list = None):
+    def get(self, id: str = None, username: str = None, data: list = None, async_: bool = False):
         """
         This function retrieves user data from an API endpoint based on either an ID or a username.
 
@@ -462,8 +508,13 @@ class User:
         if id is None and username is None:
             return "Error: No id or username provided"
 
-        # make request
-        response, status_code = Request(url=self.api_user_url)
+        # make request 
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_user_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_user_url)     
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -472,7 +523,7 @@ class User:
             # return data
             return dict_result('username', data, response)
 
-    def get_Authenticated(self, data: list = None):
+    def get_Authenticated(self, data: list = None, async_: bool = False):
         """
         This function retrieves the username of an authenticated user through an API request.
 
@@ -491,7 +542,14 @@ class User:
         self.api_user_from_auth_url = f'{self.base_url}/user'
 
         # make request
-        response, status_code = Request(url=self.api_user_from_auth_url)\
+        response, status_code = Request(url=self.api_user_from_auth_url)
+        
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_user_from_auth_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_user_from_auth_url)  
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -500,7 +558,7 @@ class User:
         elif response is not None:
             return dict_result('username', data, response)
 
-    def get_Multiple(self, ids: list = None, data: list = None):
+    def get_Multiple(self, ids: list = None, data: list = None, async_: bool = False):
         """
         This function takes a list of user IDs and returns their corresponding usernames from an API
         endpoint.
@@ -529,8 +587,12 @@ class User:
         }
 
         # make request
-        response, status_code = Request(
-            url=self.api_multiple_users_url, params=params)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_multiple_users_url, params=params)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_multiple_users_url, params=params)
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -539,7 +601,7 @@ class User:
             # return data
             return list_result('username', data, response)
 
-    def get_Projects(self, id: str = None, username: str = None, data: list = None):
+    def get_Projects(self, id: str = None, username: str = None, data: list = None, async_: bool = False):
         """
         This function retrieves project data for a user based on their ID or username.
 
@@ -567,7 +629,12 @@ class User:
             return "Error: No id or username provided"
 
         # make request
-        response, status_code = Request(url=self.api_user_projects_url)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_user_projects_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_user_projects_url)     
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -576,7 +643,7 @@ class User:
             # return data
             return list_result('slug', data, response)
 
-    def get_Notifications(self, id: str = None, username: str = None, data: list = None):
+    def get_Notifications(self, id: str = None, username: str = None, data: list = None, async_: bool = False):
         """
         This function retrieves user notifications data from an API endpoint based on the provided user ID
         or username.
@@ -605,6 +672,13 @@ class User:
 
         # make request
         response, status_code = Request(url=self.api_user_nofiications_url)
+        
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_user_nofiications_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_user_nofiications_url)     
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -613,7 +687,7 @@ class User:
             # return data
             return list_result('id', data, response)
 
-    def get_Followed_Projects(self, username: str = None, id: str = None, data: list = None):
+    def get_Followed_Projects(self, username: str = None, id: str = None, data: list = None, async_: bool = False):
 
         # set API endpoint
         self.api_user_followed_projects_url = f'{self.base_url}/user/{id or username}/follows'
@@ -625,6 +699,13 @@ class User:
         # make request
         response, status_code = Request(
             url=self.api_user_followed_projects_url)
+        
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_user_followed_projects_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_user_followed_projects_url)     
 
         if status_code != 200:
             print(f'Error: {response}')
@@ -633,7 +714,7 @@ class User:
             # return data
             return list_result('slug', data, response)
 
-    def get_Payout_History(self, id: str = None, username: str = None, data: list = None):
+    def get_Payout_History(self, id: str = None, username: str = None, data: list = None, async_: bool = False):
 
         # set API endpoint
         self.api_user_payout_history_url = f'{self.base_url}/user/{id or username}/payouts'
@@ -643,7 +724,12 @@ class User:
             return "Error: No id or username provided"
 
         # make request
-        response, status_code = Request(url=self.api_user_payout_history_url)
+        if async_:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(Request, self.api_user_payout_history_url)
+                response, status_code = future.result()
+        else:
+            response, status_code = Request(url=self.api_user_payout_history_url)     
 
         if status_code != 200:
             print(f'Error: {response}')

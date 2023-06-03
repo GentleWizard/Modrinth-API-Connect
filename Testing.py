@@ -1,7 +1,7 @@
 import os
 import dotenv
 from ModrinthAPIConnect.GET import Project, Version, User
-from ModrinthAPIConnect.Validate import set_Auth
+from ModrinthAPIConnect.Config import set_Auth
 
 # get your token from env file
 dotenv.load_dotenv()
@@ -19,13 +19,13 @@ user = User()
 #                                       GET requests                                               #
 ####################################################################################################
 
-search = proj.search(query="free", limit=1, offset=0, data=['project_id', 'title'], facets=[['versions:1.18.2'], ["project_type:mod"]])
+search = proj.search(query="free", limit=1, offset=0, data=['project_id', 'title'], facets=[['versions:1.18.2'], ["project_type:mod"]], async_=True)
 # print(search)
 
 
 ####################################################################################################
 
-project = proj.get(slug='sodium', data=['title', 'id'])
+project = proj.get(slug='sodium', data=['title', 'id'], async_=True)
 # print(project)
 
 ####################################################################################################
