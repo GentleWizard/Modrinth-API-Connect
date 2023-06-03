@@ -1,6 +1,6 @@
-# Contributing to [Repository Name]
+# Contributing to Modrinth-API-Connect
 
-Thank you for your interest in contributing to [Repository Name]! We welcome all contributions, including bug reports, feature requests, documentation improvements, and code contributions.
+Thank you for your interest in contributing to Modrinth-API-Connect! We welcome all contributions, including bug reports, feature requests, documentation improvements, and code contributions.
 
 ## Reporting Issues
 
@@ -31,7 +31,7 @@ When making changes, please follow these guidelines:
 
 ## Code of Conduct
 
-Please note that [Repository Name] has a code of conduct. By participating in this project, you agree to abide by its terms. Please see the [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) file for more information.
+Please note that Modrinth-API-Connect has a code of conduct. By participating in this project, you agree to abide by its terms. Please see the [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) file for more information.
 
 ## Questions or Feedback
 
