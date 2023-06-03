@@ -80,15 +80,18 @@ class Project:
         }
 
         # make request
-        project_data = Request(url=self.api_search_url, params=params)
+        response, status_code = Request(url=self.api_search_url, params=params)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
+        
 
-        # return error if no results found
-        if len(project_data['hits']) == 0:
-            return "No results found"
+        elif len(response['hits']) > 0:
+            # return data
+            return list_result('slug', data, response['hits'])
 
-        # return data
-        return list_result('slug', data, project_data['hits'])
-
+        else:
+            print('No results found')
     def get(self, id: str = None, slug: str = None, data: list = None):
         """
         This function takes an ID and optional data list, makes an API request to retrieve project data, and
@@ -110,17 +113,22 @@ class Project:
 
         # set API endpoint
         self.api_project_url = f'{self.base_url}/project/{id or slug}'
-        
+
         # return error if no id or slug provided
         if id is None and slug is None:
             return "Error: No id or slug provided"
-        
-        # make request
-        project_data = Request(url=self.api_project_url)
 
-        # return data
-        if project_data is not None:
-            return dict_result('id', data, project_data)
+        # make request
+        response, status_code = Request(url=self.api_project_url)
+
+        if status_code != 200:
+            print(f'Error: {response}')
+
+        elif response is not None:
+            return dict_result('id', data, response)
+        
+        else:
+            print('Error: No data returned') 
             
     def validate(self, id: str):
         """
@@ -175,10 +183,14 @@ class Project:
             return "Error: No id or slug provided"
 
         # make request
-        project_data = Request(url=self.api_dependencies_url)
-    
+        response, status_code = Request(url=self.api_dependencies_url)
         
-        return list_result('slug', data, project_data['projects'])
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:    
+            # return data
+            return list_result('slug', data, response['projects'])
 
     def get_Multiple(self, ids: list, data: list = None):
         """
@@ -210,10 +222,14 @@ class Project:
         }
         
         # make request
-        project_data = Request(url=self.api_multiple_projects_url, params=params)
- 
-        # return data
-        return list_result('slug', data, project_data)
+        response, status_code = Request(url=self.api_multiple_projects_url, params=params)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:    
+            # return data
+            return list_result('slug', data, response)
     
     def get_Random(self, count: int, data: list = None):
         """
@@ -247,11 +263,14 @@ class Project:
         }
         
         # make request
-        project_data = Request(url=self.api_random_projects_url, params=params)
+        response, status_code = Request(url=self.api_random_projects_url, params=params)
         
-        
-        # return data
-        return list_result('slug', data, project_data)
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:
+            # return data
+            return list_result('slug', data, response)
         
         
 class Version:
@@ -287,10 +306,14 @@ class Version:
             return "Error: No id or slug provided"
         
         # make request
-        project_data = Request(url=self.api_version_url)
+        response, status_code = Request(url=self.api_version_url)
         
-        # return data
-        return dict_result('name', data, project_data)
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:
+            # return data
+            return dict_result('name', data, response)
 
     def get_List(self, id: str, data: list = None, loaders: list = None, game_versions: list = None, featured: bool = False, ):
         """
@@ -336,10 +359,14 @@ class Version:
             return "Error: No id or slug provided"
 
         # make request
-        project_data = Request(url=self.api_list_version_url, params=params)
-
-        # return data
-        return list_result('id', data, project_data)
+        response, status_code = Request(url=self.api_list_version_url, params=params)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:
+            # return data
+            return list_result('id', data, response)
 
     def get_Multiple(self, ids: list, data: list = None):
         """
@@ -370,10 +397,14 @@ class Version:
         }
         
         # make request
-        project_data = Request(url=self.api_multiple_versions_url, params=params)
- 
-        # return data
-        return list_result('name', data, project_data)
+        response, status_code = Request(url=self.api_multiple_versions_url, params=params)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:
+            # return data
+            return list_result('name', data, response)
 
     def get_From_Hash(self, hash: str, data: list = None):
         """
@@ -402,10 +433,14 @@ class Version:
             return "Error: No hash provided"
         
         # make request
-        project_data = Request(url=self.api_project_versions_hash_url)
-
-        # return data
-        return dict_result('name', data, project_data)
+        response, status_code = Request(url=self.api_project_versions_hash_url)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:
+            # return data
+            return dict_result('name', data, response)
 
 
 class User:
@@ -442,11 +477,14 @@ class User:
                 return "Error: No id or username provided"
             
         # make request
-        project_data = Request(url=self.api_user_url)
+        response, status_code = Request(url=self.api_user_url)
 
-            
-        # return data
-        return dict_result('username', data, project_data)
+        if status_code != 200:
+            print(f'Error: {response}')
+        
+        else:
+            # return data
+            return dict_result('username', data, response)
         
     def get_Authenticated(self, data: list = None):
         """
@@ -468,11 +506,17 @@ class User:
         self.api_user_from_auth_url = f'{self.base_url}/user'
             
         # make request
-        project_data = Request(url=self.api_user_from_auth_url)
+        response, status_code = Request(url=self.api_user_from_auth_url)\
+            
+        if status_code != 200:
+            print(f'Error: {response}')
             
         # return data
-        if project_data is not None:
-            return dict_result('username', data, project_data)
+        elif response is not None:
+            return dict_result('username', data, response)
+        
+        else:
+            print('Error: No data returned') 
 
     def get_Multiple(self, ids: list = None, data: list = None):
         """
@@ -503,10 +547,14 @@ class User:
         }
             
         # make request
-        project_data = Request(url=self.api_multiple_users_url, params=params)
-                
-        # return data
-        return list_result('username', data, project_data)
+        response, status_code = Request(url=self.api_multiple_users_url, params=params)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:       
+            # return data
+            return list_result('username', data, response)
         
     def get_Projects(self, id: str = None, username: str = None, data: list = None):
         """
@@ -536,10 +584,14 @@ class User:
             return "Error: No id or username provided"
                     
         # make request
-        project_data = Request(url=self.api_user_projects_url)
-                    
-        # return data
-        return list_result('slug', data, project_data)
+        response, status_code = Request(url=self.api_user_projects_url)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
+            
+        else:            
+            # return data
+            return list_result('slug', data, response)
 
     def get_Notifications(self, id: str = None, username: str = None, data: list = None):
         """
@@ -570,11 +622,17 @@ class User:
             return "Error: No id or username provided"
         
         # make request
-        project_data = Request(url=self.api_user_nofiications_url)
+        response, status_code = Request(url=self.api_user_nofiications_url)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
         
         # return data
-        if project_data is not None:
-            return list_result('id', data, project_data)
+        elif response is not None:
+            return list_result('id', data, response)
+        
+        else:
+            print('Error: No data returned') 
         
     def get_Followed_Projects(self, username: str = None, id: str = None, data: list = None):
                 
@@ -586,11 +644,17 @@ class User:
             return "Error: No id or username provided"
         
         # make request
-        project_data = Request(url=self.api_user_followed_projects_url)
+        response, status_code = Request(url=self.api_user_followed_projects_url)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
         
         # return data
-        if project_data is not None:
-            return list_result('slug', data, project_data)
+        elif response is not None:
+            return list_result('slug', data, response)
+        
+        else:
+            print('Error: No data returned')        
         
     def get_Payout_History(self, id: str = None, username: str = None, data: list = None):
         
@@ -602,10 +666,16 @@ class User:
             return "Error: No id or username provided"
         
         # make request
-        project_data = Request(url=self.api_user_payout_history_url)
+        response, status_code = Request(url=self.api_user_payout_history_url)
+        
+        if status_code != 200:
+            print(f'Error: {response}')
         
         # return data
-        if project_data is not None:
-            return dict_result('all_time', data, project_data)
+        elif response is not None:
+            return dict_result('all_time', data, response)
+        
+        else:
+            print('Error: No data returned')
         
         

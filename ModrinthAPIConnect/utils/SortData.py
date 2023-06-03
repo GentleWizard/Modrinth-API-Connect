@@ -15,6 +15,7 @@ def dict_result(omit, data, project_data):
     the `project_data` dictionary except for the key-value pair with the key equal to the `omit`
     parameter. If the `data` parameter is not `None`, only
     """
+    
     hit = project_data
     data_dict = {}
     if data is not None:

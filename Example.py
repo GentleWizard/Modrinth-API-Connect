@@ -15,7 +15,6 @@ proj = Project()
 vers = Version()
 user = User()
 
-
 ####################################################################################################
 #                                       GET requests                                               #
 ####################################################################################################
@@ -50,7 +49,7 @@ id: is a string of the project you want to get data from
 data: is the data you want to get back, and is optional it defaults to showing all data
 """
 project = proj.get(slug='sodium', data=['title', 'id'])
-# print(project)
+print(project)
 
 ####################################################################################################
 
