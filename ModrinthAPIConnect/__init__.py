@@ -26,4 +26,4 @@ PATCH: This module is for patching data to the Modrinth API
 """
 
 from ModrinthAPIConnect.GET import Project, Version, User
-from ModrinthAPIConnect.Validate import set_Auth
+from ModrinthAPIConnect.Settings import set_Auth
