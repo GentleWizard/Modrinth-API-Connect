@@ -47,7 +47,7 @@ class GET():
         self.User_Agent = {'User-Agent': f"{GithubUsername}/{ProjectName} ({Email})"}
 
         # combine headers
-        self.All_Auth = {**self.User_Auth, **self.User_Agent}    
+        self.All_Auth = {**self.User_Auth, **self.User_Agent}
   
   
     def __dict_result(self, omit, data, project_data):
@@ -101,23 +101,21 @@ class GET():
         keys and values from each item in the `
         """
         result = {}
-        for hit in project_data:
+        for dict in project_data:
             data_dict = {}
             if data is not None:
                 for item in data:
-                    if item != omit:
+                    if omit is not None and item != omit:
                         key = item
-                        value = hit.get(item, None)
+                        value = dict.get(item, None)
                         data_dict[key] = value
+            if omit is not None:
+                result[dict[omit]] = data_dict
             else:
-                for key, value in hit.items():
-                    if key != omit:
-                        data_dict[key] = value
-            
-            result[hit[omit]] = data_dict
+                result = data_dict
         return result
 
-    def __api_request(self, url, params: str = None):
+    def __api_request(self, url, params: str = ""):
         """
         This is a Python function that sends an API request with specified parameters and headers, and
         returns the response data in JSON format or an error message if the request fails.
@@ -135,12 +133,11 @@ class GET():
         try:
             response = requests.get(url, params=params, headers=self.All_Auth, timeout=10)
             response.raise_for_status()
-            project_data = response.json()
+            return response.json()
         except requests.exceptions.RequestException as err:
-            return f"Error: {err}"
-        return project_data
-            
+            print(err)
 
+            
     def search(self, query: str, limit: int=1, offset: int=0, data: list = None, facets: list = None):
         """
         This function searches for data based on a query, limit, offset, and facets, and returns a list of
@@ -198,7 +195,7 @@ class GET():
         # return data
         return self.__list_result('slug', data, project_data['hits'])
 
-    def project(self, id: str, data: list = None):
+    def project(self, id: str = None, slug: str = None, data: list = None):
         """
         This function takes an ID and optional data list, makes an API request to retrieve project data, and
         returns the project data with the specified slug.
@@ -218,17 +215,18 @@ class GET():
         """
 
         # set API endpoint
-        self.api_project_url = f'{self.base_url}{self.api_version}/project/{id}'
+        self.api_project_url = f'{self.base_url}{self.api_version}/project/{id or slug}'
         
         # return error if no id or slug provided
-        if id is None:
+        if id is None and slug is None:
             return "Error: No id or slug provided"
         
         # make request
         project_data = self.__api_request(url=self.api_project_url)
 
         # return data
-        return self.__dict_result('slug', data, project_data)
+        if project_data is not None:
+            return self.__dict_result('id', data, project_data)
             
     def validate_Project(self, id: str):
         """
@@ -559,6 +557,7 @@ class GET():
                # return error if no token provided
         if self.token is None:
             return "Error: No token provided"
+        
         # set API endpoint
         self.api_user_from_auth_url = f'{self.base_url}{self.api_version}/user'
             
@@ -566,7 +565,8 @@ class GET():
         project_data = self.__api_request(url=self.api_user_from_auth_url)
             
         # return data
-        return self.__dict_result('username', data, project_data)
+        if project_data is not None:
+            return self.__dict_result('username', data, project_data)
 
     def multiple_Users(self, ids: list = None, data: list = None):
         """
@@ -663,7 +663,7 @@ class GET():
         # set API endpoint
         self.api_user_nofiications_url = f'{self.base_url}{self.api_version}/user/{id or username}/notifications'
             
-        # return error if no id or slug provided
+        # return error if no id or username provided
         if id is None and username is None:
             return "Error: No id or username provided"
         
@@ -671,9 +671,65 @@ class GET():
         project_data = self.__api_request(url=self.api_user_nofiications_url)
         
         # return data
-        return self.__list_result('id', data, project_data)
+        if project_data is not None:
+            return self.__list_result('id', data, project_data)
         
-
+    def user_Followed_Projects(self, username: str = None, id: str = None, data: list = None):
+        
+        # return error if no token provided
+        if self.token is None:
+            return "Error: No token provided"
+        
+        # set API endpoint
+        self.api_user_followed_projects_url = f'{self.base_url}{self.api_version}/user/{id or username}/follows'
+        
+        # return error if no id or username provided
+        if id is None and username is None:
+            return "Error: No id or username provided"
+        
+        # make request
+        project_data = self.__api_request(url=self.api_user_followed_projects_url)
+        
+        # return data
+        if project_data is not None:
+            return self.__list_result('slug', data, project_data)
+        
+    def user_Payout_History(self, id: str = None, username: str = None, data: list = None):
+        
+        # return error if no token provided
+        if self.token is None:
+            return "Error: No token provided"
+        
+        # set API endpoint
+        self.api_user_payout_history_url = f'{self.base_url}{self.api_version}/user/{id or username}/payouts'
+        
+        # return error if no id or username provided
+        if id is None and username is None:
+            return "Error: No id or username provided"
+        
+        # make request
+        project_data = self.__api_request(url=self.api_user_payout_history_url)
+        
+        # return data
+        if project_data is not None:
+            return self.__dict_result('all_time', data, project_data)
+        
+    def project_Members(self, id: str = None, slug: str = None, data: list = None):
+        
+        # set API endpoint
+        self.api_project_members_url = f'{self.base_url}{self.api_version}/project/{id or slug}/members'
+        
+        # return error if no id or slug provided
+        if id is None and slug is None:
+            return "Error: No id or slug provided"
+        
+        # make request
+        project_data = self.__api_request(url=self.api_project_members_url)
+        
+        # return data
+        if project_data is not None:
+            return self.__list_result(None, data, project_data)
+        
 # TODO: implement POST, PATCH, and DELETE requests
 
 # Modrinth API DELETE class

@@ -1,10 +1,13 @@
+import os
+import dotenv
 from ModrinthAPIConnect import GET
-# from ModrinthAPIConnect import POST
-# from ModrinthAPIConnect import DELETE
-# from ModrinthAPIConnect import PATCH
 
+# get your token from env file
+dotenv.load_dotenv()
+token = os.getenv('GITHUB_TOKEN')
 
-get = GET(Token='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', GithubUsername='GentleWizard', Email='github@gentlewizard.ca')
+# create the get, post, delete, and patch objects
+get = GET(Token=f'{token}', GithubUsername='GentleWizard', Email='github@gentlewizard.ca')
 # post = POST() # Not yet implemented
 # delete = DELETE() # Not yet implemented
 # patch = PATCH() # Not yet implemented
@@ -44,7 +47,7 @@ id: is a string of the project you want to get data from
 
 data: is the data you want to get back, and is optional it defaults to showing all data
 """
-project = get.project(id='XeEZ3fK2', data=['title', 'id'])
+project = get.project(slug='sodium', data=['title', 'id'])
 # print(project)
 
 ####################################################################################################
@@ -131,7 +134,7 @@ User = get.user(id='7wY1ZtMM', data=['avatar_url', 'role', 'created'])
 ####################################################################################################
 
 Your_Data = get.authenticated_User(data=['id', 'github_id'])
-print(Your_Data)
+# print(Your_Data)
 
 ####################################################################################################
 
@@ -147,3 +150,18 @@ User_Projects = get.user_Projects(id='iFMgB5Ib', data=['title', 'id'])
 
 User_notifcations = get.user_Notifications(id='7wY1ZtMM',data=['id', 'title', 'created'])
 # print(User_notifcations)
+
+####################################################################################################
+
+User_Followed_Projects = get.user_Followed_Projects(id='7wY1ZtMM', data=['title', 'id'])
+# print(User_Followed_Projects)
+
+####################################################################################################
+
+User_Payout_History = get.user_Payout_History(id='7wY1ZtMM', data=['last_month'])
+# print(User_Payout_History)
+
+####################################################################################################
+
+Project_Members = get.project_Members(slug='sodium', data=['role'])
+print(Project_Members)

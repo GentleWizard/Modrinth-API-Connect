@@ -26,9 +26,9 @@
 - [x] Get user from authorization header
 - [x] Get multiple users
 - [x] Get user's projects
-- [ ] Get user's notifications
-- [ ] Get user's followed projects
-- [ ] Get user's payout history
+- [x] Get user's notifications
+- [x] Get user's followed projects
+- [x] Get user's payout history
 
 ---
 
