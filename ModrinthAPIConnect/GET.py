@@ -76,12 +76,9 @@ class Project:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif len(response['hits']) > 0:
+        elif len(response['hits']) > 0 and status_code == 200:
             # return data
             return list_result('slug', data, response['hits'])
-
-        else:
-            print('No results found')
 
     def get(self, id: str = None, slug: str = None, data: list = None):
         """
@@ -115,11 +112,8 @@ class Project:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response is not None and response == 200:
+        elif response is not None:
             return dict_result('id', data, response)
-
-        else:
-            print('Error: No data returned')
 
     def validate(self, id: str):
         """
@@ -178,7 +172,7 @@ class Project:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return list_result('slug', data, response['projects'])
 
@@ -217,7 +211,7 @@ class Project:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return list_result('slug', data, response)
 
@@ -259,7 +253,7 @@ class Project:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return list_result('slug', data, response)
 
@@ -301,7 +295,7 @@ class Version:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return dict_result('name', data, response)
 
@@ -354,8 +348,8 @@ class Version:
 
         if status_code != 200:
             print(f'Error: {response}')
-
-        elif response == 200:
+            
+        else:
             # return data
             return list_result('id', data, response)
 
@@ -394,7 +388,7 @@ class Version:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return list_result('name', data, response)
 
@@ -430,7 +424,7 @@ class Version:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return dict_result('name', data, response)
 
@@ -474,7 +468,7 @@ class User:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return dict_result('username', data, response)
 
@@ -505,9 +499,6 @@ class User:
         # return data
         elif response is not None:
             return dict_result('username', data, response)
-
-        else:
-            print('Error: No data returned')
 
     def get_Multiple(self, ids: list = None, data: list = None):
         """
@@ -544,7 +535,7 @@ class User:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return list_result('username', data, response)
 
@@ -581,7 +572,7 @@ class User:
         if status_code != 200:
             print(f'Error: {response}')
 
-        elif response == 200:
+        else:
             # return data
             return list_result('slug', data, response)
 
@@ -618,12 +609,9 @@ class User:
         if status_code != 200:
             print(f'Error: {response}')
 
-        # return data
-        elif response is not None:
-            return list_result('id', data, response)
-
         else:
-            print('Error: No data returned')
+            # return data
+            return list_result('id', data, response)
 
     def get_Followed_Projects(self, username: str = None, id: str = None, data: list = None):
 
@@ -641,12 +629,9 @@ class User:
         if status_code != 200:
             print(f'Error: {response}')
 
-        # return data
         elif response is not None:
+            # return data
             return list_result('slug', data, response)
-
-        else:
-            print('Error: No data returned')
 
     def get_Payout_History(self, id: str = None, username: str = None, data: list = None):
 
@@ -664,7 +649,5 @@ class User:
             print(f'Error: {response}')
 
         elif response is not None:
+            # return data
             return dict_result('all_time', data, response)
-
-        else:
-            print('Error: No data returned')
