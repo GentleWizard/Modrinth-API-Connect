@@ -1,7 +1,7 @@
 import os
 import dotenv
 from ModrinthAPIConnect.GET import Project, Version, User
-from ModrinthAPIConnect.utils.Validate import set_Auth
+from ModrinthAPIConnect.Validate import set_Auth
 
 # get your token from env file
 dotenv.load_dotenv()
