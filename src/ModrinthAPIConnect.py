@@ -714,23 +714,6 @@ class GET():
         if project_data is not None:
             return self.__dict_result('all_time', data, project_data)
         
-    def project_Members(self, id: str = None, slug: str = None, data: list = None):
-        
-        # TODO: Get Working
-        
-        # set API endpoint
-        self.api_project_members_url = f'{self.base_url}{self.api_version}/project/{id or slug}/members'
-        
-        # return error if no id or slug provided
-        if id is None and slug is None:
-            return "Error: No id or slug provided"
-        
-        # make request
-        project_data = self.__api_request(url=self.api_project_members_url)
-        
-        # return data
-        if project_data is not None:
-            return self.__list_result(None, data, project_data)
         
 # TODO: implement POST, PATCH, and DELETE requests
 
