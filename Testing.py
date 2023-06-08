@@ -20,7 +20,7 @@ user = User()
 ####################################################################################################
 
 search = proj.search(query="free", limit=1, offset=0, data=['project_id', 'title'], facets=[['versions:1.18.2'], ["project_type:mod"]], async_=True)
-# print(search)
+print(search)
 
 
 ####################################################################################################

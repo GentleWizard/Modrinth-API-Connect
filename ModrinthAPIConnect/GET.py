@@ -1,16 +1,18 @@
 """
 Status: In development
 
-Description: Gets data from the Modrinth API and puts it into a dictionary to be used in your code.
+---
+
+Gets data from the Modrinth API and puts it into a dictionary to be used in your code.
 """
+
+from ModrinthAPIConnect.utils.Request import Request
+from ModrinthAPIConnect.utils.SortData import dict_result, list_result
 
 import json
 import requests
 import concurrent.futures
 
-from ModrinthAPIConnect.utils.RequestAsync import Request
-from ModrinthAPIConnect.utils.RequestSync import Request
-from ModrinthAPIConnect.utils.SortData import dict_result, list_result
 
 
 # ModrinthAPI GET class

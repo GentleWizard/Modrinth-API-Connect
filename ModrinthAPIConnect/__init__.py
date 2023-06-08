@@ -20,10 +20,11 @@ POST: This module is for posting data to the Modrinth API
 
 PATCH: This module is for patching data to the Modrinth API
 
+Config: This module is for setting the API key and other settings
 ---
 
 ### License: MIT
 """
 
 from ModrinthAPIConnect.GET import Project, Version, User
-from ModrinthAPIConnect.Settings import set_Auth
+from ModrinthAPIConnect.Config import set_Auth

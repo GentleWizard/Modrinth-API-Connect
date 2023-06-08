@@ -1,3 +1,7 @@
+"""
+This module contains functions for sorting and manipulating data.
+"""
+
 def dict_result(omit, data, project_data):
 
     hit = project_data
