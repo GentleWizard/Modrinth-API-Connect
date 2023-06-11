@@ -27,4 +27,4 @@ Config: This module is for setting the API key and other settings
 """
 
 from ModrinthAPIConnect.GET import Project, Version, User
-from ModrinthAPIConnect.Config import set_Auth
+from ModrinthAPIConnect.utils.Request import set_Auth

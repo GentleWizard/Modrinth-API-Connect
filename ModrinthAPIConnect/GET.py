@@ -28,7 +28,7 @@ class Project:
         limit, and offset for the API requests to the project endpoint.
         """
         self.api_version = 'v2'
-        self.base_url = f'https://api.modrinth.com/{self.api_version}/project'
+        self.base_url = f'https://api.modrinth.com/{self.api_version}'
         self.search_params = {}
         self.limit = 1
         self.offset = 0
@@ -348,7 +348,7 @@ class Version:
         requests to the version endpoint.
         """
         self.api_version = 'v2'
-        self.base_url = f'https://api.modrinth.com/{self.api_version}/version'
+        self.base_url = f'https://api.modrinth.com/{self.api_version}'
 
     def get(self, id: str, data: list = None, async_: bool = False):
         """
@@ -582,7 +582,7 @@ class User:
         to the user endpoint.
         """
         self.api_version = 'v2'
-        self.base_url = f'https://api.modrinth.com/{self.api_version}/user'
+        self.base_url = f'https://api.modrinth.com/{self.api_version}'
 
     def get(self, id: str = None, username: str = None, data: list = None, async_: bool = False):
         """
