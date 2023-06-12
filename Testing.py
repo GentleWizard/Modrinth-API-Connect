@@ -1,6 +1,6 @@
 import os
 import dotenv
-from ModrinthAPIConnect.GET import Project, Version, User
+from ModrinthAPIConnect.RinthAPy import Project, Version, User, Team
 from ModrinthAPIConnect.utils.Request import set_Auth
 
 # get your token from env file
@@ -14,94 +14,98 @@ set_Auth(Token=f'{token}', GithubUsername='GentleWizard', Email='github@gentlewi
 proj = Project()
 vers = Version()
 user = User()
+team = Team()
 
 ####################################################################################################
 #                                       GET requests                                               #
 ####################################################################################################
 
-search = proj.search(query="free", limit=1, offset=0, data=['project_id', 'title'], facets=[['versions:1.18.2'], ["project_type:mod"]], async_=True)
+# search = proj.search(query="free", limit=3, offset=0, data=['project_id', 'title'], facets=[['versions:1.18.2'], ["project_type:mod"]], async_=True)
 # print(search)
 
 
 ####################################################################################################
 
-project = proj.get(slug='sodium', data=['title', 'id'], async_=True)
+# project = proj.get(slug='sodium', data=['title', 'id'], async_=True)
 # print(project)
 
 ####################################################################################################
 
 
-validate_Project = proj.validate(id='XeEZ3fK2')
+# validate_Project = proj.validate(id='XeEZ3fK2')
 # print(validate_Project)
 
 ####################################################################################################
 
-Project_Dependencies = proj.dependencies(id='XeEZ3fK2', data=['title', 'id'])
+# Project_Dependencies = proj.dependencies(id='XeEZ3fK2', data=['title', 'id'], async_=True)
 # print(Project_Dependencies)
 
 ####################################################################################################
 
-List_Project_Version = vers.get_List(id='XeEZ3fK2', game_versions=['1.19.2'], loaders=['fabric'], data=['version_number'], featured=False)
+# List_Project_Version = vers.get_List(id='XeEZ3fK2', game_versions=['1.19.2'], loaders=['fabric'], data=['version_number'], featured=False, async_=True)
 # print(List_Project_Version)
 
 ####################################################################################################
 
-multiple_projects = proj.get_Multiple(ids=['ttfYkIsI', 'XeEZ3fK2'], data=['title', 'id'])
+# multiple_projects = proj.get_Multiple(ids=['ttfYkIsI', 'XeEZ3fK2'], data=['title', 'id'], async_=True)
 # print(multiple_projects)
 
 ####################################################################################################
 
-random_Project = proj.get_Random(count=2, data=['title', 'id'])
+# random_Project = proj.get_Random(count=2, data=['title', 'id'], async_=True)
 # print(random_Project)
 
 ####################################################################################################
 
-Project_Version = vers.get(id='brPpY4rT', data=['id', 'version_number'])
+# Project_Version = vers.get(id='brPpY4rT', data=['id', 'version_number'], async_=True)
 # print(Project_Version)
 
 ####################################################################################################
 
-Multiple_Project_versions = vers.get_Multiple(ids=['brPpY4rT', '5MFTTQBW'], data=['id', 'version_number'])
+# Multiple_Project_versions = vers.get_Multiple(ids=['brPpY4rT', '5MFTTQBW'], data=['id', 'version_number'], async_=True)
 # print(Multiple_Project_versions)
 
 ####################################################################################################
 
-Project_Versions_Hash = vers.get_From_Hash(hash='f1197c53e0743dc9af60f06b358dfed1f588b175', data=['id', 'game_versions'])
+# Project_Versions_Hash = vers.get_From_Hash(hash='f1197c53e0743dc9af60f06b358dfed1f588b175', data=['id', 'game_versions'], async_=True)
 # print(Project_Versions_Hash)
 
 ####################################################################################################
 
-User = user.get(id='7wY1ZtMM', data=['avatar_url', 'role', 'created'])
+# User = user.get(id='7wY1ZtMM', data=['avatar_url', 'role', 'created'], async_=True)
 # print(User)
 
 ####################################################################################################
 
-Your_Data = user.get_Authenticated(data=['id', 'github_id'])
+# Your_Data = user.get_Authenticated(data=['id', 'github_id'], async_=True)
 # print(Your_Data)
 
 ####################################################################################################
 
-Multiple_Users = user.get_Multiple(ids=['7wY1ZtMM', 'iFMgB5Ib'], data=['avatar_url', 'role', 'created'])
+# Multiple_Users = user.get_Multiple(ids=['7wY1ZtMM', 'iFMgB5Ib'], data=['avatar_url', 'role', 'created'], async_=True)
 # print(Multiple_Users)
 
 ####################################################################################################
 
-User_Projects = user.get_Projects(id='iFMgB5Ib', data=['title', 'id'])
+# User_Projects = user.get_Projects(id='iFMgB5Ib', data=['title', 'id'], async_=True)
 # print(User_Projects)
 
 ####################################################################################################
 
-User_notifcations = user.get_Notifications(id='7wY1ZtMM',data=['id', 'title', 'created'])
+# User_notifcations = user.get_Notifications(id='7wY1ZtMM',data=['id', 'title', 'created'], async_=True)
 # print(User_notifcations)
 
 ####################################################################################################
 
-User_Followed_Projects = user.get_Followed_Projects(id='7wY1ZtMM', data=['title', 'id'])
+# User_Followed_Projects = user.get_Followed_Projects(id='7wY1ZtMM', data=['title', 'id'], async_=True)
 # print(User_Followed_Projects)
 
 ####################################################################################################
 
-User_Payout_History = user.get_Payout_History(id='7wY1ZtMM', data=['last_month'])
+# User_Payout_History = user.get_Payout_History(id='7wY1ZtMM', data=['last_month'], async_=True)
 # print(User_Payout_History)
 
 ####################################################################################################
+
+Team_Members = team.get_Project_Members(id='AANobbMI', async_=True)
+print(Team_Members)
