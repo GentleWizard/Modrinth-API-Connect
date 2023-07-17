@@ -1,12 +1,13 @@
-from .utils.API_Request import request
+from .utils.API_Request_Async import request_async as request
 
 import json
+import asyncio
 
 api_version = 'v2'
 base_url = f'https://api.modrinth.com/{api_version}'
 
 
-def get(id: str = None, username: str = None):
+async def get(id: str = None, username: str = None):
     """
         The function retrieves a user's data by their ID or username and returns a dictionary of the user's data.
 
@@ -27,12 +28,12 @@ def get(id: str = None, username: str = None):
     # set API endpoint
     api_user_url = f'{base_url}/user/{id or username}'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if id is None and username is None:
-        return "Error: No id or username provided"
+        return "Error: No user_id or username provided"
 
     # make request
-    response, status_code = request(api_user_url)
+    response, status_code = await request(api_user_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -42,7 +43,7 @@ def get(id: str = None, username: str = None):
         return response
 
 
-def get_authenticated():
+async def get_authenticated():
     """
         The function retrieves the authenticated user's data and returns a dictionary of the user's data.
 
@@ -58,7 +59,7 @@ def get_authenticated():
     api_user_from_auth_url = f'{base_url}/user'
 
     # make request
-    response, status_code = request(api_user_from_auth_url)
+    response, status_code = await request(api_user_from_auth_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -68,7 +69,7 @@ def get_authenticated():
         return response
 
 
-def get_multiple(ids: list = None):
+async def get_multiple(ids: list = None):
     """
         The function retrieves multiple users' data by their IDs and returns a list of dictionaries containing
         the users' data.
@@ -87,16 +88,16 @@ def get_multiple(ids: list = None):
     # set API endpoint
     api_multiple_users_url = f'{base_url}/users'
 
-    # return error if no ids provided
+    # return error if no user_ids provided
     if ids is None:
-        return "Error: No ids provided"
+        return "Error: No user_ids provided"
 
     params = {
-        'ids': json.dumps(ids)
+        'user_ids': json.dumps(ids)
     }
 
     # make request
-    response, status_code = request(api_multiple_users_url, params=params)
+    response, status_code = await request(api_multiple_users_url, params=params)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -106,7 +107,7 @@ def get_multiple(ids: list = None):
         return response
 
 
-def get_projects(id: str = None, username: str = None):
+async def get_projects(id: str = None, username: str = None):
     """
         The function retrieves a list of projects for a user with the given ID or username and returns a list of
         dictionaries containing the projects' data.
@@ -128,12 +129,12 @@ def get_projects(id: str = None, username: str = None):
     # set API endpoint
     api_user_projects_url = f'{base_url}/user/{id or username}/projects'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if id is None and username is None:
-        return "Error: No id or username provided"
+        return "Error: No user_id or username provided"
 
     # make request
-    response, status_code = request(api_user_projects_url)
+    response, status_code = await request(api_user_projects_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -143,7 +144,7 @@ def get_projects(id: str = None, username: str = None):
         return response
 
 
-def get_notifications(id: str = None, username: str = None):
+async def get_notifications(id: str = None, username: str = None):
     """
         The function retrieves a list of notifications for a user with the given ID or username and returns a
         list of dictionaries containing the notifications' data.
@@ -165,12 +166,12 @@ def get_notifications(id: str = None, username: str = None):
     # set API endpoint
     api_user_notification_url = f'{base_url}/user/{id or username}/notifications'
 
-    # return error if no id or username provided
+    # return error if no user_id or username provided
     if id is None and username is None:
-        return "Error: No id or username provided"
+        return "Error: No user_id or username provided"
 
     # make request
-    response, status_code = request(api_user_notification_url)
+    response, status_code = await request(api_user_notification_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -180,7 +181,7 @@ def get_notifications(id: str = None, username: str = None):
         return response
 
 
-def get_followed_projects(username: str = None, id: str = None):
+async def get_followed_projects(username: str = None, id: str = None):
     """
         The function retrieves a list of projects followed by a user with the given ID or username and returns a
         list of dictionaries containing the projects' data.
@@ -202,12 +203,12 @@ def get_followed_projects(username: str = None, id: str = None):
     # set API endpoint
     api_user_followed_projects_url = f'{base_url}/user/{id or username}/follows'
 
-    # return error if no id or username provided
+    # return error if no user_id or username provided
     if id is None and username is None:
-        return "Error: No id or username provided"
+        return "Error: No user_id or username provided"
 
     # make request
-    response, status_code = request(api_user_followed_projects_url)
+    response, status_code = await request(api_user_followed_projects_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -217,7 +218,7 @@ def get_followed_projects(username: str = None, id: str = None):
         return response['projects']
 
 
-def get_payout_history(id: str = None, username: str = None):
+async def get_payout_history(id: str = None, username: str = None):
     """
     The function retrieves a user's payout history by their ID or username and returns a dictionary of the
     user's payout history.
@@ -239,12 +240,12 @@ def get_payout_history(id: str = None, username: str = None):
     # set API endpoint
     api_user_payout_history_url = f'{base_url}/user/{id or username}/payouts'
 
-    # return error if no id or username provided
+    # return error if no user_id or username provided
     if id is None and username is None:
-        return "Error: No id or username provided"
+        return "Error: No user_id or username provided"
 
     # make request
-    response, status_code = request(api_user_payout_history_url)
+    response, status_code = await request(api_user_payout_history_url)
 
     if status_code != 200:
         print(f'Error: {response}')

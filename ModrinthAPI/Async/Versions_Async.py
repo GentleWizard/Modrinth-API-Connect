@@ -1,12 +1,13 @@
-from .utils.API_Request import request
+from .utils.API_Request_Async import request_async as request
 
 import json
+import asyncio
 
 api_version = 'v2'
 base_url = f'https://api.modrinth.com/{api_version}'
 
 
-def get(id: str):
+async def get(id: str):
     """
         The function retrieves a version of a project by its ID and returns a dictionary of the version's data.
 
@@ -24,12 +25,12 @@ def get(id: str):
     # set API endpoint
     api_version_url = f'{base_url}/version/{id}'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if id is None:
-        return "Error: No id or slug provided"
+        return "Error: No user_id or slug provided"
 
     # make request
-    response, status_code = request(api_version_url)
+    response, status_code = await request(api_version_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -39,7 +40,7 @@ def get(id: str):
         return response
 
 
-def get_list(self, id: str, loaders: list = None, game_versions: list = None,
+async def get_list(id: str, loaders: list = None, game_versions: list = None,
                    featured: bool = False):
     """
         The function retrieves a list of versions for a project with the given ID and returns a list of
@@ -68,7 +69,7 @@ def get_list(self, id: str, loaders: list = None, game_versions: list = None,
     """
 
     # set API endpoint
-    self.api_list_version_url = f'{self.base_url}/project/{id}/version'
+    api_list_version_url = f'{base_url}/project/{id}/version'
 
     # params
     params = {
@@ -77,12 +78,12 @@ def get_list(self, id: str, loaders: list = None, game_versions: list = None,
         'featured': 'true' if featured else 'false',
     }
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if id is None:
-        return "Error: No id or slug provided"
+        return "Error: No user_id or slug provided"
 
     # make request
-    response, status_code = request(self.api_list_version_url, params=params)
+    response, status_code = await request(api_list_version_url, params=params)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -92,7 +93,7 @@ def get_list(self, id: str, loaders: list = None, game_versions: list = None,
         return response
 
 
-def get_multiple(ids: list):
+async def get_multiple(ids: list):
     """
         The function retrieves multiple versions of a project by their IDs and returns a list of dictionaries
         containing the versions' data.
@@ -111,17 +112,17 @@ def get_multiple(ids: list):
     # set API endpoint
     api_multiple_versions_url = f'{base_url}/versions'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if ids is None:
-        return "Error: No id or slug provided"
+        return "Error: No user_id or slug provided"
 
     # params
     params = {
-        'ids': json.dumps(ids)
+        'user_ids': json.dumps(ids)
     }
 
     # make request
-    response, status_code = request(api_multiple_versions_url, params=params)
+    response, status_code = await request(api_multiple_versions_url, params=params)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -131,15 +132,15 @@ def get_multiple(ids: list):
         return response
 
 
-def get_from_hash(hash: str):
+async def get_from_hash(hash: str):
     """
-        The function retrieves a version of a project by its hash and returns a dictionary of the version's data.
+        The function retrieves a version of a project by its version_hash and returns a dictionary of the version's data.
 
         ---
 
         ### ---Parameters---
 
-        :param hash: The hash of the version to retrieve
+        :param hash: The version_hash of the version to retrieve
         :type hash: str
 
         :return: the result of a version query based on the provided parameters. The function returns a
@@ -149,12 +150,12 @@ def get_from_hash(hash: str):
     # set API endpoint
     api_project_versions_hash_url = f'{base_url}/version_file/{hash}'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if hash is None:
-        return "Error: No hash provided"
+        return "Error: No version_hash provided"
 
     # make request
-    response, status_code = request(api_project_versions_hash_url)
+    response, status_code = await request(api_project_versions_hash_url)
 
     if status_code != 200:
         print(f'Error: {response}')

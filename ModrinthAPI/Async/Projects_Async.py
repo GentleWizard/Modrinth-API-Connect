@@ -1,12 +1,13 @@
-from .utils.API_Request import request
+from .utils.API_Request_Async import request_async as request
 
 import json
+import asyncio
 
 api_version = 'v2'
 base_url = f'https://api.modrinth.com/{api_version}'
 
 
-def search(query: str, limit: int = 5, offset: int = 0, facets: list = None):
+async def search(query: str, limit: int = 5, offset: int = 0, facets: list = None):
     """
         The function searches for data based on a query and returns a list of results.
 
@@ -48,21 +49,19 @@ def search(query: str, limit: int = 5, offset: int = 0, facets: list = None):
         'query': query,
         'limit': limit,
         'offset': offset,
-        'facets': json.dumps(facets) if facets is not None else None,
+        'facets': json.dumps(facets) if facets is not None else [],
     }
 
     # make request
-    response, status_code = request(api_search_url, params=params)
+    response, status_code = await request(api_search_url, params=params)
 
     if status_code != 200:
         print(f'Error: {response}')
 
-    elif len(response['hits']) > 0:
-        # return data
-        return response['hits']
+    return response
 
 
-def get(id: str = None, slug: str = None):
+async def get(id: str = None, slug: str = None):
     """
         The function retrieves a project by its ID or slug and returns a dictionary of the project's data.
 
@@ -83,12 +82,12 @@ def get(id: str = None, slug: str = None):
     # set API endpoint
     api_project_url = f'{base_url}/project/{id or slug}'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if id is None and slug is None:
-        return "Error: No id or slug provided"
+        return "Error: No user_id or slug provided"
 
     # make request
-    response, status_code = request(api_project_url)
+    response, status_code = await request(api_project_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -97,7 +96,7 @@ def get(id: str = None, slug: str = None):
         return response
 
 
-def validate(id: str):
+async def validate(id: str):
     """
         The function validates whether a project with the given ID exists and is accessible.
 
@@ -116,14 +115,14 @@ def validate(id: str):
 
     # make request
     if id is None:
-        return "Error: No id or slug provided"
+        return "Error: No user_id or slug provided"
 
     # return data
-    response, status_code = request(api_validity_url)
+    response, status_code = await request(api_validity_url)
     return response, status_code
 
 
-def dependencies(id: str):
+async def dependencies(id: str):
     """
         The function retrieves a list of dependencies for a project with the given ID and returns a list of
         dictionaries containing the dependencies' data.
@@ -142,12 +141,12 @@ def dependencies(id: str):
     # set API endpoint
     api_dependencies_url = f'{base_url}/project/{id}/dependencies'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if id is None:
-        return "Error: No id or slug provided"
+        return "Error: No user_id or slug provided"
 
     # make request
-    response, status_code = request(api_dependencies_url)
+    response, status_code = await request(api_dependencies_url)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -157,7 +156,7 @@ def dependencies(id: str):
         return response['dependencies']
 
 
-def get_multiple(ids: list):
+async def get_multiple(ids: list):
     """
         The function retrieves multiple projects by their IDs and returns a list of dictionaries containing the
         projects' data.
@@ -176,17 +175,17 @@ def get_multiple(ids: list):
     # set API endpoint
     api_multiple_projects_url = f'{base_url}/projects'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if ids is None:
-        return "Error: No id or slug provided"
+        return "Error: No user_id or slug provided"
 
     # params
     params = {
-        'ids': json.dumps(ids)
+        'user_ids': json.dumps(ids)
     }
 
     # make request
-    response, status_code = request(api_multiple_projects_url, params=params)
+    response, status_code = await request(api_multiple_projects_url, params=params)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -196,7 +195,7 @@ def get_multiple(ids: list):
         return response['projects']
 
 
-def get_random(count: int):
+async def get_random(count: int):
     """
     The function retrieves a random selection of projects and returns a list of dictionaries containing the
     projects' data.
@@ -215,7 +214,7 @@ def get_random(count: int):
     # set API endpoint
     api_random_projects_url = f'{base_url}/projects_random'
 
-    # return error if no id or slug provided
+    # return error if no user_id or slug provided
     if count < 1:
         return "Error: Count must be greater than 0"
 
@@ -225,7 +224,7 @@ def get_random(count: int):
     }
 
     # make request
-    response, status_code = request(api_random_projects_url, params=params)
+    response, status_code = await request(api_random_projects_url, params=params)
 
     if status_code != 200:
         print(f'Error: {response}')
@@ -233,5 +232,3 @@ def get_random(count: int):
     else:
         # return data
         return response
-
-

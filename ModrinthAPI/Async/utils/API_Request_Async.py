@@ -3,7 +3,7 @@ This module provides a function for making HTTP GET requests using the `requests
 """
 
 import aiohttp
-from RinthAPY.Async.utils.Auth_Async import All_Auth
+from ModrinthAPI.Async.utils.Auth_Async import All_Auth
 
 
 async def request_async(url, params: dict[str, ...] = {}):
