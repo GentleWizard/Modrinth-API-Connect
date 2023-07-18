@@ -239,24 +239,26 @@ def get_random(count: int):
         return response
 
 
-def edit_project(project_id: str,
-                 slug: str,
-                 title: str,
-                 description: str,
-                 categories: list[str, ...],
-                 client_side: str,
-                 server_side: str,
-                 body: str,
-                 additional_categories: list[str, ...],
-                 issues_url: str,
-                 source_url: str,
-                 wiki_url: str,
-                 discord_url: str,
-                 donation_urls: list[str, ...],
-                 license_id: str, status: str,
-                 requested_status: str,
-                 moderation_message: str,
-                 moderation_message_body):
+def edit_project(project_id: str = None,
+                 slug: str = None,
+                 title: str = None,
+                 description: str = None,
+                 categories: list[str, ...] = None,
+                 client_side: str = None,
+                 server_side: str = None,
+                 body: str = None,
+                 additional_categories: list[str, ...] = None,
+                 issues_url: str = None,
+                 source_url: str = None,
+                 wiki_url: str = None,
+                 discord_url: str = None,
+                 donation_urls: list[str, ...] = None,
+                 license_id: str = None,
+                 status: str = None,
+                 requested_status: str = None,
+                 moderation_message: str = None,
+                 moderation_message_body: str = None,
+                 ):
     """
         The function modifies a project with the given ID and returns a dictionary containing the project's
         data.

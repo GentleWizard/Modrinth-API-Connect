@@ -1,4 +1,4 @@
-All_Auth = {}
+auth = {}
 
 
 def set_auth(Token: str = None, GithubUsername: str = None, ProjectName: str = None, Email: str = None):
@@ -25,7 +25,7 @@ def set_auth(Token: str = None, GithubUsername: str = None, ProjectName: str = N
     :return: None
     """
 
-    global All_Auth
+    global auth
     # set authentication
     user_auth = {'Authorization': Token}
     # set user agent

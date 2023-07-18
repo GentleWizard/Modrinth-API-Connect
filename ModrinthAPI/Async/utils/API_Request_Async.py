@@ -7,7 +7,7 @@ from ModrinthAPI.Async.utils.Auth_Async import All_Auth
 
 
 async def request_async(url, params: dict[str, ...] = {}):
-    auth = All_Auth
+    auth = auth
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(url, params=params, headers=auth, timeout=10) as response:

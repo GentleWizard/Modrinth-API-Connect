@@ -3,11 +3,24 @@ This module provides a function for making HTTP GET requests using the `requests
 """
 
 import requests
-from .Auth import All_Auth
+import json
+import os
+
+current_dir = os.path.dirname(__file__)
+
+parent_dir = os.path.dirname(current_dir)
+
+file_path = os.path.join(parent_dir, 'auth.json')
+
+try:
+    with open(file_path, 'r') as file:
+        auth = json.load(file)
+except FileNotFoundError:
+    auth = None
 
 
-def request(url: str, method: str, params: dict[str, ...] = "", data: dict[str, ...] = None, files: dict[str, ...] = None):
-    auth = All_Auth
+def request(url: str, method: str, params: dict[str, ...] = "", data: dict[str, ...] = None,
+            files: dict[str, ...] = None):
     if method == 'GET':
         response = requests.get(url, params=params, headers=auth, timeout=10)
         try:
@@ -29,3 +42,4 @@ def request(url: str, method: str, params: dict[str, ...] = "", data: dict[str, 
 
     elif method == 'Delete':
         pass
+
