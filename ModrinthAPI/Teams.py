@@ -2,12 +2,11 @@ from .utils.API_Request import request
 
 import json
 
-api_version = 'v2'
-base_url = f'https://api.modrinth.com/{api_version}'
+api_version = "v2"
+base_url = f"https://api.modrinth.com/{api_version}"
 
 
-def get_project_members(project_id: str = None,
-                        slug: str = None):
+def get_project_members(project_id: str | None = None, slug: str | None = None):
     """
     The function retrieves a list of members in a project's team and returns a list of dictionaries
     containing the members' data.
@@ -27,19 +26,19 @@ def get_project_members(project_id: str = None,
     """
 
     # set API endpoint
-    api_project_team_members_url = f'{base_url}/project/{project_id or slug}/members'
+    api_project_team_members_url = f"{base_url}/project/{project_id or slug}/members"
 
     # make request
-    response, status_code = request(api_project_team_members_url, method='GET')
+    response, status_code = request(api_project_team_members_url, method="GET")
 
     if status_code != 200:
-        print(f'Error: {response}')
+        print(f"Error: {response}")
     else:
         # return data
         return response
 
 
-def get_team_members(team_id: str = None):
+def get_team_members(team_id: str | None = None):
     """
     The function retrieves a list of members in a team and returns a list of dictionaries
     containing the members' data.
@@ -56,13 +55,13 @@ def get_team_members(team_id: str = None):
     """
 
     # set API endpoint
-    api_team_members_url = f'{base_url}/team/{team_id}/members'
+    api_team_members_url = f"{base_url}/team/{team_id}/members"
 
     # make request
-    response, status_code = request(api_team_members_url, method='GET')
+    response, status_code = request(api_team_members_url, method="GET")
 
     if status_code != 200:
-        print(f'Error: {response}')
+        print(f"Error: {response}")
     else:
         # return data
         return response
@@ -85,13 +84,13 @@ def get_members_from_teams(team_ids: list):
     """
 
     # set API endpoint
-    api_team_members_url = f'{base_url}/team/{team_ids}/members'
+    api_team_members_url = f"{base_url}/team/{team_ids}/members"
 
     # make request
-    response, status_code = request(api_team_members_url, method='GET')
+    response, status_code = request(api_team_members_url, method="GET")
 
     if status_code != 200:
-        print(f'Error: {response}')
+        print(f"Error: {response}")
     else:
         # return data
         return response
